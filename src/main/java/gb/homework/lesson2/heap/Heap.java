@@ -26,7 +26,11 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>{
                 int size = data.size();
                 for(int pi = 0, li = 1, ri = 2; li < size || ri < size; li = 2*pi + 1, ri = 2*pi + 2){
                     int indexToExchange = -1;
-                    if((ri < size) ^ (li < size)) indexToExchange = Math.min(ri, li);
+                    if((ri < size) ^ (li < size)) {
+                        int candidate = Math.min(ri, li);
+                        if(data.get(candidate).compareTo(data.get(pi))>0)
+                            indexToExchange = candidate;
+                    }
                     else indexToExchange = findIndexToExchange(pi, li, ri);
                     if(indexToExchange != -1) {
                         swapElements(pi, indexToExchange);
@@ -70,9 +74,9 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>{
             if(parent == 0) break;
         }
     }
-
     @Override
     public boolean isEmpty() {
         return data.isEmpty();
     }
+
 }
