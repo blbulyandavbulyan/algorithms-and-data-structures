@@ -18,25 +18,22 @@ class BinarySearchTree<K: Comparable<K>, V>: AbstractStorage<K, V> {
     }
 
     override fun remove(key: K): V {
+        // FIXME: Исправить эту функцию, при удалении почему-то удаляется то, что не должно было удалится
         val nodeForDelete = findNode(key);
         val value = nodeForDelete.value
         if(nodeForDelete.hasParent()){//если наш найденный элемент это не корень
             val parent: TreeNode<K, V> = nodeForDelete.parent ?: throw UnexpectedException("WTF, сюда не мог попасть null!")
-            if(nodeForDelete.hasChild()){
-                if(parent.left === nodeForDelete){
-                    parent.left = nodeForDelete.left
-                    val right = nodeForDelete.right
-                    if(right != null)findPlaceAndInsertNode(right)
-                }
-                else if(parent.right === nodeForDelete){
-                    parent.right = nodeForDelete.right
-                    val left = nodeForDelete.left
-                    if(left != null)findPlaceAndInsertNode(left)
-                }
-                else throw UnexpectedException("Что-то пошло не так и родительский элемент не является родительским элементом...")
+            if(parent.left === nodeForDelete){
+                parent.left = nodeForDelete.left
+                val right = nodeForDelete.right
+                if(right != null)findPlaceAndInsertNode(right)
             }
-            else if(parent.left === nodeForDelete)parent.left = null
-            else parent.right = null;
+            else if(parent.right === nodeForDelete){
+                parent.right = nodeForDelete.right
+                val left = nodeForDelete.left
+                if(left != null)findPlaceAndInsertNode(left)
+            }
+            else throw UnexpectedException("Что-то пошло не так и родительский элемент не является родительским элементом...")
         }
         else root = null
         size--

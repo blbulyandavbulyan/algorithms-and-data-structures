@@ -23,7 +23,7 @@ public class TestBinarySearchTree {
         }
         Scanner scanner = new Scanner(System.in);
         while (!randomKeys.isEmpty()){
-            System.out.println("Введите ключ чтобы удалить: ");
+            System.out.print("Введите ключ чтобы удалить: ");
             Integer keyForDelete = scanner.nextInt();
             try {
                 binarySearchTree.remove(keyForDelete);
