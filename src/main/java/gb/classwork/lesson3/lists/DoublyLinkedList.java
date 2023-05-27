@@ -1,6 +1,6 @@
 package gb.classwork.lesson3.lists;
 
-public class TwoLinkedList {
+public class DoublyLinkedList {
     private static class Node{
         Node next;
         Node previous;

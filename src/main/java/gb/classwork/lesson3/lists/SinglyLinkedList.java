@@ -1,6 +1,6 @@
 package gb.classwork.lesson3.lists;
 
-public class OneLinkedList implements AbstractList{
+public class SinglyLinkedList implements AbstractList{
     private static class Node{
         Node next;
         int value;
