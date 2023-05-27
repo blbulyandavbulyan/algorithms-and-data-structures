@@ -8,6 +8,7 @@ public class TestReversingDoublyLinkedList {
         for (int i = 0; i < 11; i++) {
             reversibleSinglyLinkedList.addEnd(i);
         }
+
         for (Integer i : reversibleSinglyLinkedList) {
             System.out.print(i + " ");
         }
