@@ -1,21 +1,23 @@
 package gb.classwork.lesson3.lists;
 
-public class DoublyLinkedList {
-    private static class Node{
-        Node next;
-        Node previous;
-        int value;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+
+public class DoublyLinkedList implements AbstractList{
+
+    protected static class Node{
+        protected Node next;
+        protected Node previous;
+        protected int value;
         Node(int value){
             this.value = value;
         }
         Node(){}
     }
-    private Node head;
-    private Node tail;
-    /**
-     * Функция добавляет элемент в начало списка
-     * */
-    public void add(int value){
+    protected Node head;
+    protected Node tail;
+    public void addBegin(int value){
         Node node = new Node(value);
         if(head == null){
             head = tail = node;
@@ -55,5 +57,23 @@ public class DoublyLinkedList {
             head.previous = null;
         }
     }
+    @NotNull
+    @Override
+    public Iterator<Integer> iterator() {
+        return new Iterator<>() {
+            Node currentNode = head;
 
+            @Override
+            public boolean hasNext() {
+                return currentNode != null;
+            }
+
+            @Override
+            public Integer next() {
+                int value = currentNode.value;
+                currentNode = currentNode.next;
+                return value;
+            }
+        };
+    }
 }

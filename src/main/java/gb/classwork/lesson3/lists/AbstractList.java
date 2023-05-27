@@ -1,6 +1,6 @@
 package gb.classwork.lesson3.lists;
 
-public interface AbstractList {
+public interface AbstractList extends Iterable<Integer>{
     /**
      * Добавляет число в начало списка
      * @param value - число, которое нужно добавить
