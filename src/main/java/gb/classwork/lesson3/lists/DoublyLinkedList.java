@@ -13,7 +13,18 @@ public class DoublyLinkedList implements AbstractList{
         Node(int value){
             this.value = value;
         }
-        Node(){}
+        public Node next(){
+            return next;
+        }
+        public Node previous(){
+            return previous;
+        }
+        public int getValue(){
+            return value;
+        }
+        public void setValue(int value){
+            this.value = value;
+        }
     }
     protected Node head;
     protected Node tail;
