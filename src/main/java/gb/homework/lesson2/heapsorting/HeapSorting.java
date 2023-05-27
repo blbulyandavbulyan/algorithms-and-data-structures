@@ -28,12 +28,11 @@ public class HeapSorting {
             System.out.println("Отсортировано корректно!");
         }
         else {
-            System.out.println("Отсортированно не корректно!");
+            System.out.println("Отсортировано не корректно!");
             System.out.println("Heap sort: ");
             printArray(forHeapSort);
             System.out.println("Нормальная сортировка: ");
             printArray(forStandartSort);
-            System.out.println(-5 < -1);
         }
     }
     static public void heapSort(int[] values){
