@@ -1,4 +1,4 @@
-package gb.classwork.lesson3;
+package gb.classwork.lesson3.lists;
 
 public class OneLinkedList implements AbstractList{
     private static class Node{

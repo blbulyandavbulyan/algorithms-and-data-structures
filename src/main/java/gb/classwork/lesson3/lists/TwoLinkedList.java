@@ -1,4 +1,4 @@
-package gb.classwork.lesson3;
+package gb.classwork.lesson3.lists;
 
 public class TwoLinkedList {
     private static class Node{
