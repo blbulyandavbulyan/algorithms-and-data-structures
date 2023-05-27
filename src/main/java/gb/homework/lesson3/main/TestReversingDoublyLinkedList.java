@@ -4,17 +4,17 @@ import gb.homework.lesson3.reversible.lists.ReversibleDoublyLinkedList;
 
 public class TestReversingDoublyLinkedList {
     public static void main(String[] args) {
-        ReversibleDoublyLinkedList reversibleSinglyLinkedList = new ReversibleDoublyLinkedList();
+        ReversibleDoublyLinkedList list = new ReversibleDoublyLinkedList();
         for (int i = 0; i < 11; i++) {
-            reversibleSinglyLinkedList.addEnd(i);
+            list.addEnd(i);
         }
 
-        for (Integer i : reversibleSinglyLinkedList) {
+        for (Integer i : list) {
             System.out.print(i + " ");
         }
         System.out.println();
-        reversibleSinglyLinkedList.reverse();
-        for (Integer i : reversibleSinglyLinkedList) {
+        list.reverse();
+        for (Integer i : list) {
             System.out.print(i + " ");
         }
     }

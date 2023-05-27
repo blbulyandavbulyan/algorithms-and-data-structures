@@ -4,16 +4,16 @@ import gb.homework.lesson3.reversible.lists.ReversibleSinglyLinkedList;
 
 public class TestReversingSinglyLinkedList {
     public static void main(String[] args) {
-        ReversibleSinglyLinkedList reversibleSinglyLinkedList = new ReversibleSinglyLinkedList();
+        ReversibleSinglyLinkedList list = new ReversibleSinglyLinkedList();
         for (int i = 0; i < 101; i++) {
-            reversibleSinglyLinkedList.addEnd(i);
+            list.addEnd(i);
         }
-        for (Integer i : reversibleSinglyLinkedList) {
+        for (Integer i : list) {
             System.out.print(i + " ");
         }
         System.out.println();
-        reversibleSinglyLinkedList.reverse();
-        for (Integer i : reversibleSinglyLinkedList) {
+        list.reverse();
+        for (Integer i : list) {
             System.out.print(i + " ");
         }
     }
