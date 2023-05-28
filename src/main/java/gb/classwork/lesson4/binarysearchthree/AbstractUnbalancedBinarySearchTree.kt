@@ -1,32 +1,32 @@
 package gb.classwork.lesson4.binarysearchthree
 
-import gb.classwork.lesson4.AbstractStorage
-import gb.classwork.lesson4.TreeNode
+import gb.classwork.lesson4.keynode.AbstractKeyNode
 import gb.classwork.lesson4.binarysearchthree.exceptions.KeyAlreadyAddedException
 import gb.classwork.lesson4.binarysearchthree.exceptions.KeyNotFoundException
 import gb.classwork.lesson4.binarysearchthree.exceptions.UnexpectedException
+import java.util.function.Function
 /**
- * Данный класс предоставляет реализацию двоичного дерева поиска без балансировки
- * @author David Blbulyan
- * */
-class BinarySearchTree<K: Comparable<K>, V>: AbstractStorage<K, V> {
+* Данный класс предоставляет реализацию двоичного дерева поиска без балансировки
+* @author David Blbulyan
+* */
+abstract class AbstractUnbalancedBinarySearchTree<K: Comparable<K>, NT : AbstractKeyNode<K, NT>>(private val ntProducer: Function<K, NT>) : AbstractBinaryTree<K, NT>{
     private var size: Int = 0
-    private var root: TreeNode<K, V>? = null;
+    private var root: NT? = null;
+    override fun find(key: K): NT = findNode(key) ?: throw KeyNotFoundException()
 
-    override fun find(key: K): V = findNode(key).value
-
-    override fun add(key: K, value: V) {
-        findPlaceAndInsertNode(TreeNode(key, value))
+    override fun add(key: K): NT {
+        val node = ntProducer.apply(key)
+        findPlaceAndInsertNode(node)
         size++;
+        return node
     }
 
-    override fun remove(key: K): V {
-        // FIXME: Исправить эту функцию, при удалении почему-то удаляется то, что не должно было удалится
+    override fun remove(key: K): NT {
         // FIXME: Здесь ещё внезапно может вылететь исключение KeyAlreadyAddedException проверить почему !!!
-        val nodeForDelete = findNode(key);//ищем удаляемую ноду
-        val value = nodeForDelete.value
+        val nodeForDelete = findNode(key) ?: throw KeyNotFoundException();//ищем удаляемую ноду
+//        val value = nodeForDelete.value
         if(nodeForDelete.hasParent()){//если наш найденный элемент это не корень
-            val parent: TreeNode<K, V> = nodeForDelete.parent ?: throw UnexpectedException("WTF, сюда не мог попасть null!")
+            val parent: NT = nodeForDelete.parent ?: throw UnexpectedException("WTF, сюда не мог попасть null!")
             if(parent.left === nodeForDelete){
                 //у нас удаляемый элемент левый в parent, значит он меньше чем parent, а значит правый элемент в удаляемом элементе тоже будет меньше чем parent
                 parent.left = nodeForDelete.left
@@ -45,8 +45,8 @@ class BinarySearchTree<K: Comparable<K>, V>: AbstractStorage<K, V> {
         }
         else {
             //здесь вероятно нужно более детально выбирать какой ребёнок теперь станет корневым
-            val newRoot: TreeNode<K, V>? = (root?.right ?: root?.left) //выбираем правого если он не null, иначе выбираем левого
-            val futureChild: TreeNode<K, V>? = (root?.left ?: root?.right)//а здесь наоборот, выбираем левого если он не null, иначе правого
+            val newRoot: NT? = (root?.right ?: root?.left) //выбираем правого если он не null, иначе выбираем левого
+            val futureChild: NT? = (root?.left ?: root?.right)//а здесь наоборот, выбираем левого если он не null, иначе правого
             newRoot?.parent = null;
             root = newRoot//если новый корень null, значит у него не было потомков
             if(newRoot != null){//бум, мы точно знаем что у старого корня были дети
@@ -55,23 +55,23 @@ class BinarySearchTree<K: Comparable<K>, V>: AbstractStorage<K, V> {
             }
         }
         size--
-        return value
+        return nodeForDelete
     }
-    private fun findNode(key: K): TreeNode<K, V>{
-        var currentRoot = root ?: throw KeyNotFoundException()
-        while (currentRoot.hasChild()){
+    private fun findNode(key: K): NT?{
+        var currentRoot = root
+        while (currentRoot?.hasChild() == true){
             if(key == currentRoot.key)
                 return currentRoot;
             else if(key > currentRoot.key)
-                currentRoot = currentRoot.right ?: throw KeyNotFoundException();
+                currentRoot = currentRoot.right;
             else if(key < currentRoot.key)
-                currentRoot = currentRoot.left ?: throw KeyNotFoundException();
+                currentRoot = currentRoot.left;
         }
-        if(currentRoot.key != key)throw KeyNotFoundException()
-        else return currentRoot;
+        return if(currentRoot?.key == key) currentRoot
+        else null
     }
-    private fun findPlaceAndInsertNode(node: TreeNode<K, V>){
-        val nnRoot: TreeNode<K, V> = root ?: node;
+    private fun findPlaceAndInsertNode(node: NT){
+        val nnRoot: NT = root ?: node;
         if (nnRoot === node){
             root = node;
             return;
@@ -90,5 +90,8 @@ class BinarySearchTree<K: Comparable<K>, V>: AbstractStorage<K, V> {
                 currentNodeToInsert.left = node
             else if(node.key != currentNodeToInsert.key) throw UnexpectedException("Неожиданное исключение, ссылка в которую нужно записать оказалась не null!") //по идее это исключение не должно возникнуть, но мало ли;
         }
+    }
+    override fun exists(key: K): Boolean {
+        return findNode(key) != null
     }
 }
