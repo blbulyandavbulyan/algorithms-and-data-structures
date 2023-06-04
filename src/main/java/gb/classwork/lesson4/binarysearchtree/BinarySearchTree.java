@@ -3,7 +3,6 @@ package gb.classwork.lesson4.binarysearchtree;
 import gb.classwork.lesson4.binarysearchtree.exceptions.KeyAlreadyAddedException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -102,5 +101,8 @@ public class BinarySearchTree implements Iterable<TreeNode>{
     public Iterator<TreeNode> iterator() {
         if(head != null)return head.iterator();
         else return Collections.emptyIterator();
+    }
+    TreeNode getHead(){
+        return head;
     }
 }
