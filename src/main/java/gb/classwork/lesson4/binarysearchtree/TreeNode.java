@@ -3,12 +3,14 @@ package gb.classwork.lesson4.binarysearchtree;
 class TreeNode {
 
     enum ColorOfNode {BLACK, RED}
-
     int value;
     TreeNode left;
     TreeNode right;
     TreeNode parent;
     ColorOfNode color = ColorOfNode.RED;
+    private TreeNode(){
+
+    }
     public TreeNode(int value) {
         this.value = value;
     }
@@ -24,6 +26,12 @@ class TreeNode {
     }
     public boolean isRightChildRed(){
         return right != null && right.color == ColorOfNode.RED;
+    }
+    public boolean isRightChildBlack(){
+        return right == null || right.color == ColorOfNode.BLACK;
+    }
+    public boolean isLeftChildBlack(){
+        return left == null || left.color == ColorOfNode.BLACK;
     }
     public boolean isBothChildRed(){
         return isLeftChildRed() && isRightChildRed();
@@ -41,14 +49,37 @@ class TreeNode {
         return this;
     }
     public boolean hasParent(){return parent != null;}
+    public TreeNode rotateLeft() {
+        // FIXME: 02.06.2023 СДЕЛАТЬ МЕТОД
+        TreeNode b = this;
+        TreeNode d = b.right;
+        {
+            TreeNode pB = b.parent;
+            if (pB != null) pB.replaceChild(b, d);
+            else d.parent = null;
+        }
+        TreeNode c = d.left;
+        d.left = b;
+        b.parent = d;
+        //замена левого ребёнка d:
+        b.right = c;
+        if(c != null)c.parent = b;
+        return d;
+    }
     public TreeNode rotateRight() {
-        //сначала заменим ребёнка у нашего родителя на нашего левого ребёнка
-        //если у нас есть родитель
-        TreeNode g = this;// мы - дедушка
-        // FIXME: 02.06.2023 Этот метод не до конца реализован
-        if(hasParent())parent.replaceChild(this, left);
-//        left.replaceChild(left.right)
-        return null;
+        TreeNode d = this;
+        TreeNode b = d.left;
+        {
+            TreeNode dP = d.parent;
+            if(dP != null) dP.replaceChild(d, b);
+            else b.parent = null;
+        }
+        TreeNode c = b.right;
+        b.right = d;
+        d.parent = b;
+        d.left = c;
+        if(c != null)c.parent = d;
+        return b;
     }
     private TreeNode replaceChild(TreeNode childForReplace, TreeNode newChild) {
         TreeNode oldValue;
@@ -59,20 +90,13 @@ class TreeNode {
             oldValue = right;
             right = newChild;
         } else throw new IllegalArgumentException("childForReplace is not my child!");
-        newChild.parent = this;
-        childForReplace.parent = null;
+        if(newChild != null)newChild.parent = this;
+        if(childForReplace != null)childForReplace.parent = null;
         return oldValue;
     }
-    public boolean isThisLeftChild(TreeNode x) {
-        return x == left;
-    }
-    public void makeBothChildBlack(){
-        if(left != null)left.color = ColorOfNode.BLACK;
-        if(right != null)right.color = ColorOfNode.BLACK;
-    }
-    public TreeNode getAnotherChild(TreeNode child){
-        if(child == left)return left;
-        else if(child == right)return right;
+    public TreeNode getBrother(TreeNode b){
+        if(b != left)return right;
+        else if(b != right)return left;
         else throw new IllegalArgumentException("This is not a child of this node!");
     }
 }
