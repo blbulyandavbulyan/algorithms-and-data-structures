@@ -4,9 +4,7 @@ import gb.classwork.lesson4.binarysearchtree.BinarySearchTree;
 import gb.classwork.lesson4.binarysearchtree.exceptions.KeyAlreadyAddedException;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -14,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class BinarySearchTreeTest {
-    private Random random = new Random();
+    private final Random random = new Random();
     private int[] generateRandomArray(int count){
         return IntStream.generate(random::nextInt).distinct().limit(count).toArray();
     }
@@ -77,7 +75,41 @@ public class BinarySearchTreeTest {
             }
         }
     }
+    @Test void redNodesDoesNotHaveRedParent(){
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        for (TreeNode node : binarySearchTreeAndData.tree) {
+            if(node.hasParent()){
+                if(node.isRed() && node.parent.isRed()){
+                    fail("Красная нода имеет красного родителя, значение: %d, входные данные: %s".formatted(node.value, Arrays.toString(binarySearchTreeAndData.data)));
+                }
+            }
+        }
+    }
+    @Test void headIsBlack(){
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        assertTrue(binarySearchTreeAndData.tree.getHead().isBlack(), "Корень оказался красным, входные данные: %s".formatted(Arrays.toString(binarySearchTreeAndData.data)));
+    }
+    @Test void allBlackDepthAreEqual(){
+        //ищем ноды у которых либо нет детей, либо есть только один ребёнок
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        Collection<TreeNode> endPoints = StreamSupport.stream(binarySearchTreeAndData.tree.spliterator(), false)
+                .filter((n)-> n.left == null || n.right == null).toList();
+        //теперь задача пройти от каждой до корня, и подсчитать количество чёрных вершин встреченных на пути
+        Collection<Integer> counts = new LinkedList<>();
+        for (TreeNode endPoint : endPoints){
+            TreeNode currentNode = endPoint;
+            int countBlacks = 0;
+            while (currentNode.hasParent()){
+                if(currentNode.isBlack())countBlacks++;
+                currentNode = currentNode.parent;
+            }
+            counts.add(countBlacks);
+        }
+        Set<Integer> uniqueCounts = new HashSet<>(counts);
+        assertEquals(1, uniqueCounts.size(), "Количество чёрных вершин от конечных точек до корня разные! Количества: %s\n\n Входные данные: %s".formatted(Arrays.toString(binarySearchTreeAndData.data), uniqueCounts));
+    }
     @Test void redNodesAreOnlyRightChildren(){
+        // TODO: 04.06.2023 написать этот тест
 
     }
 }
