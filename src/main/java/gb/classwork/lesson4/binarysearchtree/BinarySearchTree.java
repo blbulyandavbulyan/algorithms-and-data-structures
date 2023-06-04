@@ -1,6 +1,13 @@
 package gb.classwork.lesson4.binarysearchtree;
 
-public class BinarySearchTree {
+import gb.classwork.lesson4.binarysearchtree.exceptions.KeyAlreadyAddedException;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
+public class BinarySearchTree implements Iterable<TreeNode>{
     private TreeNode head;
 
     public boolean find(int value){
@@ -80,7 +87,7 @@ public class BinarySearchTree {
                     if(currentNode.left == null)break;
                     currentNode = currentNode.left;
                 }
-                else throw new RuntimeException("Ключ уже добавлен!");
+                else throw new KeyAlreadyAddedException("Ключ %d уже добавлен!".formatted(insertedNode.value));
             }
             insertedNode.parent = currentNode;
             if(insertedNode.value > currentNode.value)currentNode.right = insertedNode;
@@ -88,5 +95,12 @@ public class BinarySearchTree {
         }
 
         return insertedNode;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<TreeNode> iterator() {
+        if(head != null)return head.iterator();
+        else return Collections.emptyIterator();
     }
 }

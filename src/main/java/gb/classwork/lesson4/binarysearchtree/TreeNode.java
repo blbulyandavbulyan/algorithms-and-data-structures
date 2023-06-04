@@ -1,6 +1,39 @@
 package gb.classwork.lesson4.binarysearchtree;
 
-class TreeNode {
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Queue;
+
+class TreeNode implements Iterable<TreeNode>{
+
+    @NotNull
+    @Override
+    public Iterator<TreeNode> iterator() {
+        return new Iterator<TreeNode>() {
+            Queue<TreeNode> queue = new LinkedList<>();
+            {
+                queue.add(TreeNode.this);
+            }
+            @Override
+            public boolean hasNext() {
+                return !queue.isEmpty();
+            }
+
+            @Override
+            public TreeNode next() {
+                if(!queue.isEmpty()){
+                    TreeNode top = queue.poll();
+                    if(top.left != null)queue.add(top.left);
+                    if(top.right != null)queue.add(top.right);
+                    return top;
+                }
+                else throw new NoSuchElementException("Элементов больше нет!");
+            }
+        };
+    }
 
     enum ColorOfNode {BLACK, RED}
     int value;
@@ -93,10 +126,5 @@ class TreeNode {
         if(newChild != null)newChild.parent = this;
         if(childForReplace != null)childForReplace.parent = null;
         return oldValue;
-    }
-    public TreeNode getBrother(TreeNode b){
-        if(b != left)return right;
-        else if(b != right)return left;
-        else throw new IllegalArgumentException("This is not a child of this node!");
     }
 }
