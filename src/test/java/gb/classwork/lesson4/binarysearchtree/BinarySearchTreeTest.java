@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 import static org.junit.jupiter.api.Assertions.*;
 public class BinarySearchTreeTest {
     private final Random random = new Random();
+    private final int defaultDataSize = random.nextInt(0,200);
     private int[] generateRandomArray(int count){
         return IntStream.generate(random::nextInt).distinct().limit(count).toArray();
     }
@@ -60,13 +61,13 @@ public class BinarySearchTreeTest {
     }
     @Test
     public void containsRandomAddedElements(){
-        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
         for(int i : binarySearchTreeAndData.data){
             assertTrue(binarySearchTreeAndData.tree.find(i), "Дерево не содержит %d, входные данные: %s".formatted(i, Arrays.toString(binarySearchTreeAndData.data)));
         }
     }
     @Test void treeIterator(){
-        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
         Collection<Integer> values = StreamSupport.stream(binarySearchTreeAndData.tree.spliterator(), false).map((n)->n.value).toList();
         if(values.size() != binarySearchTreeAndData.data.length)fail("Размеры входного массива и тех данных что выдал итератор отличаются! Входные данные: %s".formatted(Arrays.toString(binarySearchTreeAndData.data)));
         else{
@@ -76,7 +77,7 @@ public class BinarySearchTreeTest {
         }
     }
     @Test void redNodesDoesNotHaveRedParent(){
-        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
         for (TreeNode node : binarySearchTreeAndData.tree) {
             if(node.hasParent()){
                 if(node.isRed() && node.parent.isRed()){
@@ -86,12 +87,12 @@ public class BinarySearchTreeTest {
         }
     }
     @Test void headIsBlack(){
-        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
         assertTrue(binarySearchTreeAndData.tree.getHead().isBlack(), "Корень оказался красным, входные данные: %s".formatted(Arrays.toString(binarySearchTreeAndData.data)));
     }
     @Test void allBlackDepthAreEqual(){
         //ищем ноды у которых либо нет детей, либо есть только один ребёнок
-        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(100);
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
         Collection<TreeNode> endPoints = StreamSupport.stream(binarySearchTreeAndData.tree.spliterator(), false)
                 .filter((n)-> n.left == null || n.right == null).toList();
         //теперь задача пройти от каждой до корня, и подсчитать количество чёрных вершин встреченных на пути
@@ -108,8 +109,14 @@ public class BinarySearchTreeTest {
         Set<Integer> uniqueCounts = new HashSet<>(counts);
         assertEquals(1, uniqueCounts.size(), "Количество чёрных вершин от конечных точек до корня разные! Количества: %s\n\n Входные данные: %s".formatted(Arrays.toString(binarySearchTreeAndData.data), uniqueCounts));
     }
-    @Test void redNodesAreOnlyRightChildren(){
+    @Test void redNodesAreOnlyLeftChildren(){
         // TODO: 04.06.2023 написать этот тест
-
+        BinarySearchTreeAndData binarySearchTreeAndData = generateRandomFilledTree(defaultDataSize);
+        var redChildren = StreamSupport.stream(binarySearchTreeAndData.tree.spliterator(), false).filter(n->n.hasParent() && n.isRed()).toList();
+        for (var childNode : redChildren) {
+            if(childNode.isRight()){
+                fail("Есть правая красная нода в красно-чёрном дереве");
+            }
+        }
     }
 }

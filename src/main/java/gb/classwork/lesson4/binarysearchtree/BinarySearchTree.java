@@ -29,9 +29,22 @@ public class BinarySearchTree implements Iterable<TreeNode>{
     }
     private void balanceAfterAdd(TreeNode addedNode){
         TreeNode x = addedNode;
-        while (x.parent != null && x.parent.color != TreeNode.ColorOfNode.BLACK){
+        while ((x.parent != null && x.parent.color != TreeNode.ColorOfNode.BLACK) || (x.isRed() && x.isRight())){
             TreeNode father = x.parent;
-            if(x.isRed() && father.isRed()){
+            if(x.isRed() && x.isRight() && father.isBlack()){
+                if(father.isBothChildRed()){
+                    father.swapColor();
+                    x = father;
+                }
+                else {
+                    father.color = TreeNode.ColorOfNode.RED;
+                    x.color = TreeNode.ColorOfNode.BLACK;
+                    var possibleNewRoot = father.rotateLeft();
+                    if(!possibleNewRoot.hasParent())head = possibleNewRoot;
+                    break;
+                }
+            }
+            else if(x.isRed() && father.isRed()){
                 TreeNode grandfather = father.parent;
                 //оба ребёнка у деда чёрные
                 if(grandfather.isBothChildRed()) {
@@ -47,9 +60,9 @@ public class BinarySearchTree implements Iterable<TreeNode>{
                         else{//x - левый сын отца
                             father.color = TreeNode.ColorOfNode.BLACK;
                             grandfather.color = TreeNode.ColorOfNode.RED;
+                            x = grandfather;
                             TreeNode n = grandfather.rotateRight();
                             if(n.parent == null)head = n;//в результате поворота мог измениться корень
-                            break;
                         }
                     }
                     else {//father - правый ребёнок нашего деда
@@ -60,9 +73,10 @@ public class BinarySearchTree implements Iterable<TreeNode>{
                         else{
                             father.color = TreeNode.ColorOfNode.BLACK;
                             grandfather.color = TreeNode.ColorOfNode.RED;
+                            x = grandfather;
                             TreeNode n = grandfather.rotateLeft();
                             if(n.parent == null)head = n;//в результате поворота мог измениться корень
-                            break;
+
                         }
                     }
                 }
@@ -73,7 +87,7 @@ public class BinarySearchTree implements Iterable<TreeNode>{
     private TreeNode insertNode(TreeNode insertedNode){
         if(head == null){
             head = insertedNode;
-            head.color = TreeNode.ColorOfNode.BLACK;
+//            head.color = TreeNode.ColorOfNode.BLACK;
         }
         else{
             TreeNode currentNode = head;
@@ -91,6 +105,7 @@ public class BinarySearchTree implements Iterable<TreeNode>{
             insertedNode.parent = currentNode;
             if(insertedNode.value > currentNode.value)currentNode.right = insertedNode;
             else if(insertedNode.value < currentNode.value)currentNode.left = insertedNode;
+            else throw new KeyAlreadyAddedException("Ключ %d уже добавлен!".formatted(insertedNode.value));//несмотря на дублирующуюся проверку, она здесь реально нужна
         }
 
         return insertedNode;
